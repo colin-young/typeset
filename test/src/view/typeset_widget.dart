@@ -1,6 +1,6 @@
 import 'package:flutter/gestures.dart' show TapGestureRecognizer;
 import 'package:flutter/material.dart';
-import 'package:typeset/typeset.dart';
+import 'package:typeset_tag/typeset.dart';
 
 class TypeSetTest extends StatelessWidget {
   const TypeSetTest({
@@ -22,7 +22,7 @@ class TypeSetTest extends StatelessWidget {
           child: Column(
             children: [
               if (title != null)
-                TypeSet(
+                TypeSetTag(
                   title!,
                   style: style,
                   linkRecognizerBuilder: (linkText, url) =>

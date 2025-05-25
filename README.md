@@ -59,7 +59,7 @@ flutter pub get
 TypeSet is designed to be as simple as using Flutter's built-in `Text` widget:
 
 ```dart
-import 'package:typeset/typeset.dart';
+import 'package:typeset_tag/typeset.dart';
 
 // Just drop in your formatted text
 TypeSet('Hello *Flutter* developers!');
@@ -103,7 +103,7 @@ TypeSet('Use the ¦* symbol to show *asterisks*');
 New in v2.3.0! Add WhatsApp-like styling to your text input fields with real-time formatting preview:
 
 ```dart
-import 'package:typeset/typeset.dart';
+import 'package:typeset_tag/typeset.dart';
 import 'package:flutter/material.dart';
 
 // Create a controller with optional styling parameters
@@ -136,7 +136,7 @@ TextField(
 Add formatting options to the text selection context menu with `getTypesetContextMenus()`:
 
 ```dart
-import 'package:typeset/typeset.dart';
+import 'package:typeset_tag/typeset.dart';
 import 'package:flutter/material.dart';
 
 TextField(

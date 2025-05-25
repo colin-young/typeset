@@ -3,6 +3,9 @@
 library typeset;
 
 export 'src/core/typeset_reserved.dart';
+export 'src/taggable/utils/tag_parser_parts.dart';
+export 'src/taggable/utils/tag_style.dart';
+export 'src/taggable/utils/tag_text_converter.dart';
 export 'src/view/typeset.dart';
 export 'src/view/typeset_context_menus.dart';
 export 'src/view/typeset_editing_controller.dart';

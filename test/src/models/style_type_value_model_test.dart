@@ -1,8 +1,8 @@
 // ignore_for_file: lines_longer_than_80_chars, cascade_invocations
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:typeset/src/models/style_type_enum.dart';
-import 'package:typeset/src/models/style_type_value_model.dart';
+import 'package:typeset_tag/src/models/style_type_enum.dart';
+import 'package:typeset_tag/src/models/style_type_value_model.dart';
 
 void main() {
   group(

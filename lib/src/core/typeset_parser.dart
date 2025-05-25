@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:typeset/src/core/typeset_controller.dart';
-import 'package:typeset/src/models/style_type_enum.dart';
-import 'package:typeset/typeset.dart';
+import 'package:typeset_tag/src/core/typeset_controller.dart';
+import 'package:typeset_tag/src/models/style_type_enum.dart';
+import 'package:typeset_tag/src/taggable/utils/tag_parser_parts.dart';
+import 'package:typeset_tag/typeset.dart';
 import 'package:url_launcher/url_launcher.dart' as launcher;
 
 ///[TypesetParser]
@@ -64,13 +67,14 @@ class TypesetParser {
   /// Outputs:
   /// - A list of [TextSpan] objects representing the parsed and formatted text
   ///   based on the input parameters.
-  static List<TextSpan> parser({
+  static Future<List<TextSpan>> parser<T>({
     required String inputText,
     TextStyle? linkStyle,
     GestureRecognizer Function(String text, String url)? linkRecognizerBuilder,
     TextStyle? monospaceStyle,
     TextStyle? boldStyle,
-  }) {
+    TagParserParts<T>? tagParserParts,
+  }) async {
     final controller = TypesetController(
       input: inputText,
     );
@@ -108,11 +112,14 @@ class TypesetParser {
         case StyleTypeEnum.monospace:
           spans.add(
             TextSpan(
-              text: justText,
-              style: monospaceStyle ??
-                  const TextStyle(
-                    fontFamily: 'Courier',
-                  ),
+              children: await _getSpan(
+                tagParserParts,
+                justText,
+                monospaceStyle ??
+                    const TextStyle(
+                      fontFamily: 'Courier',
+                    ),
+              ),
             ),
           );
           break;
@@ -120,14 +127,17 @@ class TypesetParser {
         case StyleTypeEnum.bold:
           spans.add(
             TextSpan(
-              text: justText,
-              style: boldStyle?.copyWith(
-                    fontSize: fontSize,
-                  ) ??
-                  TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: fontSize,
-                  ),
+              children: await _getSpan(
+                tagParserParts,
+                justText,
+                boldStyle?.copyWith(
+                      fontSize: fontSize,
+                    ) ??
+                    TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: fontSize,
+                    ),
+              ),
             ),
           );
           break;
@@ -135,23 +145,62 @@ class TypesetParser {
         default:
           spans.add(
             TextSpan(
-              text: justText,
-              style: TextStyle(
-                fontStyle: text.styleType == StyleTypeEnum.italic
-                    ? FontStyle.italic
-                    : null,
-                decoration: text.styleType == StyleTypeEnum.strikethrough
-                    ? TextDecoration.lineThrough
-                    : text.styleType == StyleTypeEnum.underline
-                        ? TextDecoration.underline
-                        : null,
-                fontSize: fontSize,
+              children: await _getSpan(
+                tagParserParts,
+                justText,
+                TextStyle(
+                  fontStyle: text.styleType == StyleTypeEnum.italic
+                      ? FontStyle.italic
+                      : null,
+                  decoration: text.styleType == StyleTypeEnum.strikethrough
+                      ? TextDecoration.lineThrough
+                      : text.styleType == StyleTypeEnum.underline
+                          ? TextDecoration.underline
+                          : null,
+                  fontSize: fontSize,
+                ),
               ),
             ),
           );
       }
     }
     return spans;
+  }
+
+  static Future<List<InlineSpan>> _getSpan<T>(
+    TagParserParts<T?>? tagParserParts,
+    String justText,
+    TextStyle style,
+  ) async {
+    // Apply the base style first
+    final baseSpan = TextSpan(text: justText, style: style);
+
+    // Don't try to parse tags if there's no tag parser configured
+    if (tagParserParts == null) {
+      return [baseSpan];
+    }
+
+    // Then add any tag-specific formatting on top
+    try {
+      final tagSpans = await convertTagTextToInlineSpans<T?>(
+        justText,
+        tagStyles: tagParserParts.tagStyles,
+        backendToTaggable: tagParserParts.backendToTaggable,
+        taggableToInlineSpan: tagParserParts.taggableToInlineSpan,
+      );
+      
+      // Merge the base style with any tag spans
+      return tagSpans.map((span) => 
+        TextSpan(
+          text: span.toPlainText(),
+          style: style.merge(span is TextSpan ? span.style : null),
+          recognizer: span is TextSpan ? span.recognizer : null
+        )
+      ).toList();
+    } catch (e) {
+      debugPrint('Error parsing tags: $e');
+      return [baseSpan];
+    }
   }
 
   /// Creates a [TapGestureRecognizer] that launches the given URL when tapped

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:typeset/src/models/style_type_enum.dart';
-import 'package:typeset/typeset.dart';
+import 'package:typeset_tag/src/models/style_type_enum.dart';
+import 'package:typeset_tag/typeset.dart';
 
 /// Generates a list of [ContextMenuButtonItem]s for text editing actions.
 ///
@@ -163,15 +163,6 @@ List<ContextMenuButtonItem> getTypesetContextMenus({
       ContextMenuButtonItem(
         label: StyleTypeEnum.monospace.styleTypeEnumValue,
         onPressed: () => applyTextStyle(TypesetReserved.monospaceChar),
-      ),
-    );
-  }
-
-  if (styleTypes.contains(StyleTypeEnum.underline)) {
-    buttonItems.add(
-      ContextMenuButtonItem(
-        label: StyleTypeEnum.underline.styleTypeEnumValue,
-        onPressed: () => applyTextStyle(TypesetReserved.underlineChar),
       ),
     );
   }

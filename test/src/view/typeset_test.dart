@@ -2,8 +2,9 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:typeset/src/core/typeset_parser.dart';
+import 'package:typeset_tag/src/core/typeset_parser.dart';
 
+import '../core/typeset_parser_test.dart';
 import 'typeset_widget.dart';
 
 void main() {
@@ -71,106 +72,52 @@ void main() {
   });
 
   group('TypesetParser parser', () {
-    test('parses bold text', () {
+    test('parses bold text', () async {
       const inputText = 'This *word* is bold';
-      final expectedSpans = [
-        const TextSpan(
-          text: 'This ',
-          style: TextStyle(),
-        ),
-        const TextSpan(
-          text: 'word',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
+      expect(
+        await TypesetParser.parser(inputText: inputText),
+        allOf(
+          hasLength(3),
+          predicate(
+            (List<TextSpan> s) =>
+                s[1].children![0].style?.fontWeight == FontWeight.bold,
           ),
         ),
-        const TextSpan(
-          text: ' is bold',
-          style: TextStyle(),
-        ),
-      ];
-      expect(
-        TypesetParser.parser(inputText: inputText),
-        equals(expectedSpans),
       );
     });
 
-    test('parses italic text', () {
+    test('parses italic text', () async {
       const inputText = 'This _word_ is italic';
-      final expectedSpans = [
-        const TextSpan(
-          text: 'This ',
-          style: TextStyle(),
-        ),
-        const TextSpan(
-          text: 'word',
-          style: TextStyle(
-            fontStyle: FontStyle.italic,
+      expect(
+        await TypesetParser.parser(inputText: inputText),
+        allOf(
+          hasLength(3),
+          predicate(
+            (List<TextSpan> s) =>
+                s[1].children![0].style?.fontStyle == FontStyle.italic,
           ),
         ),
-        const TextSpan(
-          text: ' is italic',
-          style: TextStyle(),
-        ),
-      ];
-      expect(
-        TypesetParser.parser(inputText: inputText),
-        equals(expectedSpans),
       );
     });
 
-    test('parses underline text', () {
-      const inputText = 'This #word# is underlined';
-      final expectedSpans = [
-        const TextSpan(
-          text: 'This ',
-          style: TextStyle(),
-        ),
-        const TextSpan(
-          text: 'word',
-          style: TextStyle(
-            decoration: TextDecoration.underline,
-          ),
-        ),
-        const TextSpan(
-          text: ' is underlined',
-          style: TextStyle(),
-        ),
-      ];
-      expect(
-        TypesetParser.parser(inputText: inputText),
-        equals(expectedSpans),
-      );
-    });
-
-    test('parses strikethrough text', () {
+    test('parses strikethrough text', () async {
       const inputText = 'This ~word~ is strikethrough';
-      final expectedSpans = [
-        const TextSpan(
-          text: 'This ',
-          style: TextStyle(),
-        ),
-        const TextSpan(
-          text: 'word',
-          style: TextStyle(
-            decoration: TextDecoration.lineThrough,
+      expect(
+        await TypesetParser.parser(inputText: inputText),
+        allOf(
+          hasLength(3),
+          predicate(
+            (List<TextSpan> s) =>
+                s[1].children![0].style?.decoration == TextDecoration.lineThrough,
           ),
         ),
-        const TextSpan(
-          text: ' is strikethrough',
-          style: TextStyle(),
-        ),
-      ];
-      expect(
-        TypesetParser.parser(inputText: inputText),
-        equals(expectedSpans),
       );
     });
 
-    test('parses link correctly', () {
+    test('parses link correctly', () async {
       const inputText = '§Example|http://example.com§';
 
-      final result = TypesetParser.parser(
+      final result = await TypesetParser.parser<Taggable>(
         inputText: inputText,
         linkRecognizerBuilder: (linkText, url) => TapGestureRecognizer()
           ..onTap = () {

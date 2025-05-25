@@ -1,7 +1,7 @@
 // ignore_for_file: lines_longer_than_80_chars
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:typeset/typeset.dart';
+import 'package:typeset_tag/typeset.dart';
 
 void main() {
   group(
@@ -22,7 +22,6 @@ void testAccessAllConstants() {
   expect(TypesetReserved.italicChar, equals('_'));
   expect(TypesetReserved.strikethroughChar, equals('~'));
   expect(TypesetReserved.monospaceChar, equals('`'));
-  expect(TypesetReserved.underlineChar, equals('#'));
   expect(TypesetReserved.linkChar, equals('§'));
   expect(TypesetReserved.linkSplitChar, equals('|'));
 }

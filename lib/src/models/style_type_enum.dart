@@ -31,6 +31,9 @@ enum StyleTypeEnum {
   /// Strikethrough Style
   strikethrough('Strikethrough'),
 
+  /// Mention Style
+  mention('Mention'),
+
   /// Link Style
   link('Link');
 

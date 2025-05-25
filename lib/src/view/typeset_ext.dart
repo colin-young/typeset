@@ -1,11 +1,11 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/painting.dart';
-import 'package:typeset/src/view/typeset.dart';
+import 'package:typeset_tag/src/view/typeset.dart';
 
 ///TypeSet extension on String to use [typeset] method
 extension TypeSetExtension on String {
   ///[typeset] method to format the text with different styles
-  TypeSet typeset({
+  TypeSetTag<T> typeset<T>({
     TextStyle? style,
     TextAlign textAlign = TextAlign.start,
     TextDirection? textDirection,
@@ -23,8 +23,9 @@ extension TypeSetExtension on String {
     TextStyle? linkStyle,
     TextStyle? boldStyle,
     TextStyle? monospaceStyle,
+    TextStyle? mentionStyle,
   }) {
-    return TypeSet(
+    return TypeSetTag(
       this,
       style: style,
       textAlign: textAlign,

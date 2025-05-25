@@ -1,6 +1,6 @@
-import 'package:typeset/src/core/typeset_reserved.dart';
-import 'package:typeset/src/models/style_type_enum.dart';
-import 'package:typeset/src/models/style_type_value_model.dart';
+import 'package:typeset_tag/src/core/typeset_reserved.dart';
+import 'package:typeset_tag/src/models/style_type_enum.dart';
+import 'package:typeset_tag/src/models/style_type_value_model.dart';
 
 /// The 'TypesetController' class is responsible for manipulating
 /// a given input string and converting it into a list of TypeValueModel
@@ -74,7 +74,6 @@ class TypesetController {
     const literalsMap = <String, StyleTypeEnum>{
       TypesetReserved.boldChar: StyleTypeEnum.bold,
       TypesetReserved.italicChar: StyleTypeEnum.italic,
-      TypesetReserved.underlineChar: StyleTypeEnum.underline,
       TypesetReserved.monospaceChar: StyleTypeEnum.monospace,
       TypesetReserved.strikethroughChar: StyleTypeEnum.strikethrough,
       TypesetReserved.linkChar: StyleTypeEnum.link,

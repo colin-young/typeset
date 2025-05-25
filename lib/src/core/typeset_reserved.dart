@@ -33,9 +33,6 @@ final class TypesetReserved {
   /// The literal for monospace formatting.
   static const monospaceChar = '`';
 
-  /// The literal for underline formatting.
-  static const underlineChar = '#';
-
   /// The literal for creating links.
   static const linkChar = '§';
 
@@ -52,7 +49,6 @@ final class TypesetReserved {
     italicChar,
     strikethroughChar,
     monospaceChar,
-    underlineChar,
     linkChar,
     linkSplitChar,
   };

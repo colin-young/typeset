@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
-import 'package:flutter/widgets.dart';
-import 'package:typeset/src/core/typeset_parser.dart';
+import 'package:flutter/material.dart';
+import 'package:typeset_tag/src/core/typeset_parser.dart';
+import 'package:typeset_tag/src/taggable/utils/tag_parser_parts.dart';
 
 /// {@template typeset}
 /// WhatsApp like text formatting for you!
@@ -25,10 +26,10 @@ import 'package:typeset/src/core/typeset_parser.dart';
 ///
 /// Link
 /// → §google.com|https://google.com§
-class TypeSet extends StatelessWidget {
+class TypeSetTag<T> extends StatelessWidget {
   ///[inputText] is required field
 
-  const TypeSet(
+  const TypeSetTag(
     this.inputText, {
     super.key,
     this.style,
@@ -48,6 +49,7 @@ class TypeSet extends StatelessWidget {
     this.linkStyle,
     this.monospaceStyle,
     this.boldStyle,
+    this.tagParserParts,
   });
 
   ///[style] is the style of the text
@@ -118,32 +120,44 @@ class TypeSet extends StatelessWidget {
   ///[boldStyle] is the style of the bold text
   final TextStyle? boldStyle;
 
+  final TagParserParts? tagParserParts;
+
   @override
   Widget build(BuildContext context) {
     // Use the `RichText` widget to display the text with the correct styles
-    return Text.rich(
-      TextSpan(
-        children: TypesetParser.parser(
-          inputText: inputText,
-          linkRecognizerBuilder: linkRecognizerBuilder,
-          linkStyle: linkStyle,
-          monospaceStyle: monospaceStyle,
-          boldStyle: boldStyle,
-        ),
+    return FutureBuilder<List<InlineSpan>>(
+      future: TypesetParser.parser(
+        inputText: inputText,
+        linkRecognizerBuilder: linkRecognizerBuilder,
+        linkStyle: linkStyle,
+        monospaceStyle: monospaceStyle,
+        boldStyle: boldStyle,
+        tagParserParts: tagParserParts,
       ),
-      textAlign: textAlign,
-      style: style,
-      textDirection: textDirection,
-      locale: locale,
-      softWrap: softWrap,
-      overflow: overflow,
-      textScaler: textScaler,
-      maxLines: maxLines,
-      semanticsLabel: semanticsLabel,
-      textWidthBasis: textWidthBasis,
-      textHeightBehavior: textHeightBehavior,
-      selectionColor: selectionColor,
-      strutStyle: strutStyle,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return Text.rich(
+            TextSpan(
+              children: snapshot.data,
+            ),
+            textAlign: textAlign,
+            style: style,
+            textDirection: textDirection,
+            locale: locale,
+            softWrap: softWrap,
+            overflow: overflow,
+            textScaler: textScaler,
+            maxLines: maxLines,
+            semanticsLabel: semanticsLabel,
+            textWidthBasis: textWidthBasis,
+            textHeightBehavior: textHeightBehavior,
+            selectionColor: selectionColor,
+            strutStyle: strutStyle,
+          );
+        } else {
+          return CircularProgressIndicator();
+        }
+      },
     );
   }
 }

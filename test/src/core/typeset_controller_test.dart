@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:typeset/src/core/typeset_controller.dart';
-import 'package:typeset/src/models/style_type_enum.dart';
+import 'package:typeset_tag/src/core/typeset_controller.dart';
+import 'package:typeset_tag/src/models/style_type_enum.dart';
 
 void main() {
   group(
@@ -13,7 +13,7 @@ void main() {
         'Special Characters - Strikethrough',
         testReservedCharactersStrikethrough,
       );
-      test('Special Characters - Underline', testReservedCharactersUnderline);
+      // test('Special Characters - Underline', testReservedCharactersUnderline);
       test('Special Characters - Monospace', testReservedCharactersMonospace);
       test('Special Characters - Link', testReservedCharactersLink);
 

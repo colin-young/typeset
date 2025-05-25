@@ -3,8 +3,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:typeset/src/models/style_type_enum.dart';
-import 'package:typeset/typeset.dart';
+import 'package:typeset_tag/src/models/style_type_enum.dart';
+import 'package:typeset_tag/typeset.dart';
 
 // Mock class for EditableTextState
 class MockEditableTextState extends Mock implements EditableTextState {
@@ -79,7 +79,7 @@ void main() {
         editableTextState: mockEditableTextState,
       );
 
-      expect(buttonItems.length, equals(6));
+      expect(buttonItems.length, equals(5));
     });
 
     test('applies bold style when StyleTypeEnum.bold is provided', () {
@@ -140,34 +140,34 @@ void main() {
     });
 
     //underline
-    test('applies underline style when StyleTypeEnum.underline is provided',
-        () {
-      // Simulate the condition where the selected text is not styled
-      when(() => mockEditableTextState.textEditingValue).thenReturn(
-        const TextEditingValue(
-          text: 'text',
-          selection: TextSelection(baseOffset: 0, extentOffset: 4),
-        ),
-      );
+    // test('applies underline style when StyleTypeEnum.underline is provided',
+    //     () {
+    //   // Simulate the condition where the selected text is not styled
+    //   when(() => mockEditableTextState.textEditingValue).thenReturn(
+    //     const TextEditingValue(
+    //       text: 'text',
+    //       selection: TextSelection(baseOffset: 0, extentOffset: 4),
+    //     ),
+    //   );
 
-      final buttonItems = getTypesetContextMenus(
-        editableTextState: mockEditableTextState,
-        styleTypes: [StyleTypeEnum.underline],
-      );
+    //   final buttonItems = getTypesetContextMenus(
+    //     editableTextState: mockEditableTextState,
+    //     styleTypes: [StyleTypeEnum.underline],
+    //   );
 
-      // Simulate the user tapping the Underline button
-      buttonItems.first.onPressed!();
+    //   // Simulate the user tapping the Underline button
+    //   buttonItems.first.onPressed!();
 
-      // Verify that the text is now styled
-      verify(
-        () => mockEditableTextState.updateEditingValue(
-          const TextEditingValue(
-            text: '#text#',
-            selection: TextSelection.collapsed(offset: 6),
-          ),
-        ),
-      ).called(1);
-    });
+    //   // Verify that the text is now styled
+    //   verify(
+    //     () => mockEditableTextState.updateEditingValue(
+    //       const TextEditingValue(
+    //         text: '#text#',
+    //         selection: TextSelection.collapsed(offset: 6),
+    //       ),
+    //     ),
+    //   ).called(1);
+    // });
 
     test(
         'applies strikethrough style when StyleTypeEnum.strikethrough is provided',

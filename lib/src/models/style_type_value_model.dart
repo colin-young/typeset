@@ -1,4 +1,4 @@
-import 'package:typeset/src/models/style_type_enum.dart';
+import 'package:typeset_tag/src/models/style_type_enum.dart';
 
 /// Represents a model for a type-value pair.
 ///
