@@ -170,8 +170,9 @@ class TypeSetEditingController<T> extends TextEditingController {
     final linkText = linkParts.isNotEmpty ? linkParts[0] : '';
     final url = linkParts.length > 1 ? linkParts[1] : '';
 
-    // If we have a link recognizer, use it
+    // Always apply link style, but only add recognizer if we have one
     if (linkRecognizerBuilder != null && url.isNotEmpty) {
+      // For links with recognizer, split into clickable text and URL
       spans.add(
         TextSpan(
           text: linkText,
@@ -196,12 +197,18 @@ class TypeSetEditingController<T> extends TextEditingController {
             ),
           );
       }
-
-      // Skip to after the closing marker
-      return closingIndex;
+    } else {
+      // For links without recognizer, show the whole content with link style
+      spans.add(
+        TextSpan(
+          text: content,
+          style: contentStyle,
+        ),
+      );
     }
 
-    // If no recognizer or URL, just add the content as a normal span
+    // Skip to after the closing marker in both cases
+    return closingIndex;
     final tagSpan = getTaggableSpan(
       content: content,
       style: contentStyle,

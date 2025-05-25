@@ -92,18 +92,23 @@ class TypesetParser {
           final linkData = text.value.split(TypesetReserved.linkSplitChar);
           final linkText = linkData.isNotEmpty ? linkData[0] : '';
           final url = linkData.length == 2 ? linkData[1] : '';
+
+          // Create base link style
+          final linkBaseStyle = TextStyle(
+            color: Colors.blue,
+            decoration: TextDecoration.underline,
+            fontSize: fontSize,
+            decorationColor: Colors.blue,
+          );
+
+          // Merge with provided link style if any
+          final finalLinkStyle =
+              linkStyle?.copyWith(fontSize: fontSize) ?? linkBaseStyle;
+
           spans.add(
             TextSpan(
-              text: fontSize != null ? justText : linkText,
-              style: linkStyle?.copyWith(
-                    fontSize: fontSize,
-                  ) ??
-                  TextStyle(
-                    color: Colors.blue,
-                    decoration: TextDecoration.underline,
-                    fontSize: fontSize,
-                    decorationColor: Colors.blue,
-                  ),
+              text: linkText,
+              style: finalLinkStyle,
               recognizer: linkRecognizerBuilder?.call(linkText, url) ??
                   (url.isNotEmpty ? _launch(url) : null),
             ),
@@ -188,15 +193,14 @@ class TypesetParser {
         backendToTaggable: tagParserParts.backendToTaggable,
         taggableToInlineSpan: tagParserParts.taggableToInlineSpan,
       );
-      
+
       // Merge the base style with any tag spans
-      return tagSpans.map((span) => 
-        TextSpan(
-          text: span.toPlainText(),
-          style: style.merge(span is TextSpan ? span.style : null),
-          recognizer: span is TextSpan ? span.recognizer : null
-        )
-      ).toList();
+      return tagSpans
+          .map((span) => TextSpan(
+              text: span.toPlainText(),
+              style: style.merge(span is TextSpan ? span.style : null),
+              recognizer: span is TextSpan ? span.recognizer : null))
+          .toList();
     } catch (e) {
       debugPrint('Error parsing tags: $e');
       return [baseSpan];
