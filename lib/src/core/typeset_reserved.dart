@@ -27,6 +27,9 @@ final class TypesetReserved {
   /// The literal for italic formatting.
   static const italicChar = '_';
 
+  /// The literal for underline formatting.
+  static const underlineChar = '#';
+
   /// The literal for strikethrough formatting.
   static const strikethroughChar = '~';
 
@@ -47,6 +50,7 @@ final class TypesetReserved {
     escapeLiteral,
     boldChar,
     italicChar,
+    underlineChar,
     strikethroughChar,
     monospaceChar,
     linkChar,

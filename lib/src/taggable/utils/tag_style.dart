@@ -2,7 +2,7 @@
 class TagStyle {
   const TagStyle({
     this.prefix = '@',
-    this.regExp = r'[a-zA-Z0-9]+',
+    this.regExp = '[a-zA-Z0-9]+',
   });
 
   /// The prefix that identifies the tag, e.g. '@' in '@tag'. Defaults to '@'.
