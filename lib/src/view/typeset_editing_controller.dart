@@ -88,7 +88,8 @@ class TypeSetEditingController<T> extends TextEditingController {
   /// A list of `TypeValueModel` objects representing the manipulated string.
   List<StyleTypeValueModel> list = [];
 
-  /// Searches for taggables based on the tag prefix (e.g. '@') and query (e.g. 'Ali').
+  /// Searches for taggables based on the tag prefix (e.g. '@') and query (e.g.
+  /// 'Ali').
   final FutureOr<Iterable<T>> Function(String prefix, String? query)
       searchTaggables;
 
@@ -209,23 +210,6 @@ class TypeSetEditingController<T> extends TextEditingController {
 
     // Skip to after the closing marker in both cases
     return closingIndex;
-    final tagSpan = getTaggableSpan(
-      content: content,
-      style: contentStyle,
-      context: context,
-      toFrontendConverter: toFrontendConverter,
-      toBackendConverter: toBackendConverter,
-      textStyleBuilder: textStyleBuilder,
-      tagStyles: tagStyles,
-      tagBackendFormatsToTaggables: _tagBackendFormatsToTaggables,
-    );
-    // Add span directly or add its children if it has any
-    if (tagSpan.text != null || tagSpan.recognizer != null) {
-      spans.add(tagSpan);
-    } else if (tagSpan.children != null) {
-      spans.addAll(tagSpan.children!.whereType<TextSpan>());
-    }
-    return -1; // Signal to continue normal processing
   }
 
   /// Finds the index of the next formatting marker in the text.
@@ -345,12 +329,14 @@ class TypeSetEditingController<T> extends TextEditingController {
               } else if (tagSpan.children != null) {
                 // Merge the parent style with each child's style
                 spans.addAll(
-                  tagSpan.children!.whereType<TextSpan>().map((child) => TextSpan(
-                        text: child.text,
-                        style: contentStyle.merge(child.style),
-                        recognizer: child.recognizer,
-                        children: child.children,
-                      )),
+                  tagSpan.children!.whereType<TextSpan>().map(
+                        (child) => TextSpan(
+                          text: child.text,
+                          style: contentStyle.merge(child.style),
+                          recognizer: child.recognizer,
+                          children: child.children,
+                        ),
+                      ),
                 );
               }
             }
@@ -401,12 +387,14 @@ class TypeSetEditingController<T> extends TextEditingController {
           } else if (tagSpan.children != null) {
             // Merge parent style with each child's style
             spans.addAll(
-              tagSpan.children!.whereType<TextSpan>().map((child) => TextSpan(
-                    text: child.text,
-                    style: style?.merge(child.style) ?? child.style,
-                    recognizer: child.recognizer,
-                    children: child.children,
-                  )),
+              tagSpan.children!.whereType<TextSpan>().map(
+                    (child) => TextSpan(
+                      text: child.text,
+                      style: style?.merge(child.style) ?? child.style,
+                      recognizer: child.recognizer,
+                      children: child.children,
+                    ),
+                  ),
             );
           }
           currentIndex = nextMarkerIndex;
@@ -428,12 +416,14 @@ class TypeSetEditingController<T> extends TextEditingController {
           } else if (tagSpan.children != null) {
             // Merge parent style with each child's style
             spans.addAll(
-              tagSpan.children!.whereType<TextSpan>().map((child) => TextSpan(
-                    text: child.text,
-                    style: style?.merge(child.style) ?? child.style,
-                    recognizer: child.recognizer,
-                    children: child.children,
-                  )),
+              tagSpan.children!.whereType<TextSpan>().map(
+                    (child) => TextSpan(
+                      text: child.text,
+                      style: style?.merge(child.style) ?? child.style,
+                      recognizer: child.recognizer,
+                      children: child.children,
+                    ),
+                  ),
             );
           }
           break;
@@ -558,17 +548,29 @@ class TypeSetEditingController<T> extends TextEditingController {
   /// A map that maps taggable backend formats to taggable objects.
   Map<String, T> _tagBackendFormatsToTaggables = {};
 
-  /// The cursor position before the last change. Used for intuitive cursor movement.
+  /// The cursor position before the last change. Used for intuitive cursor
+  /// movement.
   int _previousCursorPosition = 0;
 
+  /// A function that converts incoming backend data into a taggable object.
+  ///
+  /// Takes two [String] parameters:
+  /// - First parameter: The raw string data from the backend
+  /// - Second parameter: The identifier or key for the data
+  ///
+  /// Returns a [FutureOr<T>] which can be either an immediate value or a Future
+  /// containing the converted taggable object of type T.
   FutureOr<T> Function(String, String) toTaggableFromBackend;
 
-  /// The text formatted in backend format. Do not use `controller.text` directly.
+  /// The text formatted in backend format. Do not use `controller.text`
+  /// directly.
   String get textInBackendFormat => text.replaceAll(spaceMarker, '');
 
-  /// Sets the initial text of the text field, converting backend strings to taggables.
+  /// Sets the initial text of the text field, converting backend strings to
+  /// taggables.
   ///
-  /// The `backendToTaggable` function is used to convert backend strings to taggables.
+  /// The `backendToTaggable` function is used to convert backend strings to
+  /// taggables.
   /// It has the 'FutureOr' signature to allow for asynchronous operations.
   Future<void> setText(
     String backendText,
@@ -623,7 +625,8 @@ class TypeSetEditingController<T> extends TextEditingController {
   /// user moved into the tag with the arrow keys, in which case the cursor is
   /// moved to the other side.
   ///
-  /// If a range is selected, any tags included in the range are selected as a whole.
+  /// If a range is selected, any tags included in the range are selected as a
+  /// whole.
   void _cursorController() {
     final baseOffset = selection.baseOffset;
     final extentOffset = selection.extentOffset;
@@ -804,7 +807,9 @@ class TypeSetEditingController<T> extends TextEditingController {
   ///
   /// If taggable options are found, the user is prompted to select one.
   Future<void> _availableTaggablesController(
-      String prefix, String prompt) async {
+    String prefix,
+    String prompt,
+  ) async {
     final taggables = searchTaggables(prefix, prompt);
     await buildTaggables(taggables).then((taggable) {
       if (taggable == null) return;
@@ -836,7 +841,8 @@ class TypeSetEditingController<T> extends TextEditingController {
     );
   }
 
-  /// Updates the previous cursor position. This is used for intuitive cursor movement.
+  /// Updates the previous cursor position. This is used for intuitive cursor
+  /// movement.
   void _updatePreviousCursorPosition() {
     _previousCursorPosition = selection.baseOffset;
   }

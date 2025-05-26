@@ -4,7 +4,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:typeset_tag/src/core/typeset_controller.dart';
 import 'package:typeset_tag/src/models/style_type_enum.dart';
-import 'package:typeset_tag/src/taggable/utils/tag_parser_parts.dart';
 import 'package:typeset_tag/typeset.dart';
 import 'package:url_launcher/url_launcher.dart' as launcher;
 
@@ -199,7 +198,7 @@ class TypesetParser {
           .map((span) => TextSpan(
               text: span.toPlainText(),
               style: style.merge(span is TextSpan ? span.style : null),
-              recognizer: span is TextSpan ? span.recognizer : null))
+              recognizer: span is TextSpan ? span.recognizer : null,),)
           .toList();
     } catch (e) {
       debugPrint('Error parsing tags: $e');

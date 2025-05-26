@@ -5,12 +5,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:typeset_tag/typeset.dart';
 
+class Taggable {
+  const Taggable({required this.id, required this.name});
+
+  final String id;
+  final String name;
+}
+
 void main() {
   group('TypeSetEditingController', () {
-    late TypeSetEditingController controller;
+    late TypeSetEditingController<Taggable> controller;
 
     TextSpan buildSpan(
-      TypeSetEditingController controller, {
+      TypeSetEditingController<Taggable> controller, {
       TextStyle? style,
     }) {
       late TextSpan result;
@@ -35,10 +42,11 @@ void main() {
       controller = TypeSetEditingController(
         searchTaggables: (String prefix, String? query) => Future.value([]),
         buildTaggables: (FutureOr<Iterable<dynamic>> taggables) =>
-            Future.value([]),
-        toFrontendConverter: <T>(taggable) => '',
-        toBackendConverter: <T>(taggable) => '',
-        toTaggableFromBackend: (prefix, tag) => null,
+            Future.value(const Taggable(id: 'id', name: 'name')),
+        toFrontendConverter: <T>(T taggable) => '',
+        toBackendConverter: <T>(T taggable) => '',
+        toTaggableFromBackend: (prefix, tag) =>
+            const Taggable(id: 'id', name: 'name'),
         textStyleBuilder: (BuildContext context, String prefix) =>
             const TextStyle(),
       );
@@ -184,10 +192,11 @@ void main() {
         linkRecognizerBuilder: (text, url) => TapGestureRecognizer(),
         searchTaggables: (String prefix, String? query) => Future.value([]),
         buildTaggables: (FutureOr<Iterable<dynamic>> taggables) =>
-            Future.value([]),
-        toFrontendConverter: <T>(taggable) => '',
-        toBackendConverter: <T>(taggable) => '',
-        toTaggableFromBackend: (prefix, tag) => '',
+            Future.value(const Taggable(id: 'id', name: 'name')),
+        toFrontendConverter: <T>(T taggable) => '',
+        toBackendConverter: <T>(T taggable) => '',
+        toTaggableFromBackend: (prefix, tag) =>
+            const Taggable(id: 'id', name: 'name'),
         textStyleBuilder: (BuildContext context, String prefix) =>
             const TextStyle(),
       )..text = 'This is '

@@ -3,6 +3,13 @@ import 'package:typeset_tag/src/taggable/constants.dart';
 import 'package:typeset_tag/src/taggable/utils/tag.dart';
 import 'package:typeset_tag/typeset.dart';
 
+/// Returns a [TextSpan] based on the parsed tags and text content
+///
+/// The generic type [T] represents the type of data associated with the tags
+/// that will be parsed and converted into the resulting [TextSpan].
+///
+/// A [TextSpan] is a segment of text that can have its own style and gesture
+/// recognizers, which makes it suitable for rich text rendering.
 TextSpan getTaggableSpan<T>({
     required String content,
     required BuildContext context,

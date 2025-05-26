@@ -120,7 +120,12 @@ class TypeSetTag<T> extends StatelessWidget {
   ///[boldStyle] is the style of the bold text
   final TextStyle? boldStyle;
 
-  final TagParserParts? tagParserParts;
+  /// Parts that specify how to parse a text tag into a particular type T.
+  ///
+  /// These parts include functions to parse opening and closing tags, as well
+  /// as how to handle content within tags. If null, no tag parsing will be
+  /// performed.
+  final TagParserParts<T>? tagParserParts;
 
   @override
   Widget build(BuildContext context) {
@@ -155,7 +160,7 @@ class TypeSetTag<T> extends StatelessWidget {
             strutStyle: strutStyle,
           );
         } else {
-          return CircularProgressIndicator();
+          return const CircularProgressIndicator();
         }
       },
     );

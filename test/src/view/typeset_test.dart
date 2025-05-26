@@ -3,9 +3,16 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:typeset_tag/src/core/typeset_parser.dart';
-
-import '../core/typeset_parser_test.dart';
 import 'typeset_widget.dart';
+
+/// A class representing a taggable item with an ID and name for testing
+/// purposes.
+class Taggable {
+  const Taggable({required this.id, required this.name});
+
+  final String id;
+  final String name;
+}
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -75,7 +82,7 @@ void main() {
     test('parses bold text', () async {
       const inputText = 'This *word* is bold';
       expect(
-        await TypesetParser.parser(inputText: inputText),
+        await TypesetParser.parser<Taggable>(inputText: inputText),
         allOf(
           hasLength(3),
           predicate(
@@ -89,7 +96,7 @@ void main() {
     test('parses italic text', () async {
       const inputText = 'This _word_ is italic';
       expect(
-        await TypesetParser.parser(inputText: inputText),
+        await TypesetParser.parser<Taggable>(inputText: inputText),
         allOf(
           hasLength(3),
           predicate(
@@ -103,12 +110,13 @@ void main() {
     test('parses strikethrough text', () async {
       const inputText = 'This ~word~ is strikethrough';
       expect(
-        await TypesetParser.parser(inputText: inputText),
+        await TypesetParser.parser<Taggable>(inputText: inputText),
         allOf(
           hasLength(3),
           predicate(
             (List<TextSpan> s) =>
-                s[1].children![0].style?.decoration == TextDecoration.lineThrough,
+                s[1].children![0].style?.decoration ==
+                TextDecoration.lineThrough,
           ),
         ),
       );

@@ -10,7 +10,8 @@ import 'package:typeset_tag/typeset.dart';
 ///
 /// Typically, the [tagStyles] list is the same as the one used in the creation
 /// of the tag text to parse the tags. The [backendToTaggable] function is used
-/// to convert the backend string into a taggable object and may be asynchronous.
+/// to convert the backend string into a taggable object and may be
+/// asynchronous.
 ///
 /// Usage:
 /// ```dart

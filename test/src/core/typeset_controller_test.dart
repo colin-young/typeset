@@ -13,7 +13,6 @@ void main() {
         'Special Characters - Strikethrough',
         testReservedCharactersStrikethrough,
       );
-      // test('Special Characters - Underline', testReservedCharactersUnderline);
       test('Special Characters - Monospace', testReservedCharactersMonospace);
       test('Special Characters - Link', testReservedCharactersLink);
 
