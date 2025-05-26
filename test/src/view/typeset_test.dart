@@ -74,44 +74,53 @@ void main() {
   group('TypesetParser parser', () {
     test('parses bold text', () async {
       const inputText = 'This *word* is bold';
-      expect(
-        await TypesetParser.parser(inputText: inputText),
-        allOf(
-          hasLength(3),
-          predicate(
-            (List<TextSpan> s) =>
-                s[1].children![0].style?.fontWeight == FontWeight.bold,
-          ),
-        ),
-      );
+      final spans = await TypesetParser.parser<dynamic>(inputText: inputText);
+
+      expect(spans, hasLength(3));
+      expect(spans[0], isA<TextSpan>());
+      expect((spans[0] as TextSpan).text, 'This ');
+
+      expect(spans[1], isA<TextSpan>());
+      final boldSpan = spans[1] as TextSpan;
+      expect(boldSpan.text, 'word');
+      expect(boldSpan.style?.fontWeight, FontWeight.bold);
+
+      expect(spans[2], isA<TextSpan>());
+      expect((spans[2] as TextSpan).text, ' is bold');
     });
 
     test('parses italic text', () async {
       const inputText = 'This _word_ is italic';
-      expect(
-        await TypesetParser.parser(inputText: inputText),
-        allOf(
-          hasLength(3),
-          predicate(
-            (List<TextSpan> s) =>
-                s[1].children![0].style?.fontStyle == FontStyle.italic,
-          ),
-        ),
-      );
+      final spans = await TypesetParser.parser<dynamic>(inputText: inputText);
+
+      expect(spans, hasLength(3));
+      expect(spans[0], isA<TextSpan>());
+      expect((spans[0] as TextSpan).text, 'This ');
+
+      expect(spans[1], isA<TextSpan>());
+      final italicSpan = spans[1] as TextSpan;
+      expect(italicSpan.text, 'word');
+      expect(italicSpan.style?.fontStyle, FontStyle.italic);
+
+      expect(spans[2], isA<TextSpan>());
+      expect((spans[2] as TextSpan).text, ' is italic');
     });
 
     test('parses strikethrough text', () async {
       const inputText = 'This ~word~ is strikethrough';
-      expect(
-        await TypesetParser.parser(inputText: inputText),
-        allOf(
-          hasLength(3),
-          predicate(
-            (List<TextSpan> s) =>
-                s[1].children![0].style?.decoration == TextDecoration.lineThrough,
-          ),
-        ),
-      );
+      final spans = await TypesetParser.parser<dynamic>(inputText: inputText);
+
+      expect(spans, hasLength(3));
+      expect(spans[0], isA<TextSpan>());
+      expect((spans[0] as TextSpan).text, 'This ');
+
+      expect(spans[1], isA<TextSpan>());
+      final strikeSpan = spans[1] as TextSpan;
+      expect(strikeSpan.text, 'word');
+      expect(strikeSpan.style?.decoration, TextDecoration.lineThrough);
+
+      expect(spans[2], isA<TextSpan>());
+      expect((spans[2] as TextSpan).text, ' is strikethrough');
     });
 
     test('parses link correctly', () async {
@@ -127,7 +136,7 @@ void main() {
 
       expect(result.length, 1);
       final linkSpan = result[0];
-      expect(linkSpan.text, 'Example');
+      expect((linkSpan as TextSpan).text, 'Example');
       expect(linkSpan.style?.color, Colors.blue);
       expect(linkSpan.style?.decoration, TextDecoration.underline);
       expect(linkSpan.recognizer, isA<TapGestureRecognizer>());
