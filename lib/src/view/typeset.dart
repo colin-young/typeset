@@ -155,7 +155,7 @@ class TypeSetTag<T> extends StatelessWidget {
             strutStyle: strutStyle,
           );
         } else {
-          return const CircularProgressIndicator();
+          return CircularProgressIndicator();
         }
       },
     );

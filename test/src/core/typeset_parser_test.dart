@@ -39,9 +39,9 @@ Future<void> testBoldItalicLinkInParser() async {
   expect(spans[5].text, 'link');
 
   expect((spans[1].children!.first as TextSpan).style!.fontWeight,
-      FontWeight.w700,);
+      FontWeight.w700);
   expect((spans[3].children!.first as TextSpan).style!.fontStyle,
-      FontStyle.italic,);
+      FontStyle.italic);
   expect(spans[5].style!.color, Colors.blue);
 }
 
@@ -82,9 +82,9 @@ Future<void> testCustomStyling() async {
   expect(spans[5].text, 'link');
 
   expect((spans[1].children!.first as TextSpan).style!.fontWeight,
-      FontWeight.w600,);
+      FontWeight.w600);
   expect((spans[3].children!.first as TextSpan).style!.fontStyle,
-      FontStyle.italic,);
+      FontStyle.italic);
   expect(spans[5].style!.color, Colors.red);
   expect(spans[5].recognizer, recognizer);
 }

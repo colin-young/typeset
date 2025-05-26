@@ -436,19 +436,19 @@ Link
           color: Theme.of(context).colorScheme.primary,
           fontWeight: FontWeight.bold,
         ),
-      '*' => const TextStyle(
+      '*' => TextStyle(
           fontWeight: FontWeight.bold,
         ),
-      '_' => const TextStyle(
+      '_' => TextStyle(
           fontStyle: FontStyle.italic,
         ),
-      '~' => const TextStyle(
+      '~' => TextStyle(
           decoration: TextDecoration.lineThrough,
         ),
-      '`' => const TextStyle(
+      '`' => TextStyle(
           fontFamily: 'Courier',
         ),
-      '§' => const TextStyle(
+      '§' => TextStyle(
           color: Colors.blue,
           decoration: TextDecoration.underline,
         ),
