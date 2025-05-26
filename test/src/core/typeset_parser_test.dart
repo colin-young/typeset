@@ -31,23 +31,18 @@ Future<void> testBoldItalicLinkInParser() async {
   );
 
   expect(spans.length, 6);
-  expect((spans[0] as TextSpan).text, 'This is ');
-  expect((spans[1] as TextSpan).text, 'bold');
-  expect((spans[2] as TextSpan).text, ' and ');
-  expect((spans[3] as TextSpan).text, 'italic');
-  expect((spans[4] as TextSpan).text,
-      ' text with a ');
-  expect((spans[5] as TextSpan).text, 'link');
+  expect((spans[0].children!.first as TextSpan).text, 'This is ');
+  expect((spans[1].children!.first as TextSpan).text, 'bold');
+  expect((spans[2].children!.first as TextSpan).text, ' and ');
+  expect((spans[3].children!.first as TextSpan).text, 'italic');
+  expect((spans[4].children!.first as TextSpan).text, ' text with a ');
+  expect(spans[5].text, 'link');
 
-  expect(
-    (spans[1] as TextSpan).style!.fontWeight,
-    FontWeight.w700,
-  );
-  expect(
-    (spans[3] as TextSpan).style!.fontStyle,
-    FontStyle.italic,
-  );
-  expect((spans[5] as TextSpan).style!.color, Colors.blue);
+  expect((spans[1].children!.first as TextSpan).style!.fontWeight,
+      FontWeight.w700,);
+  expect((spans[3].children!.first as TextSpan).style!.fontStyle,
+      FontStyle.italic,);
+  expect(spans[5].style!.color, Colors.blue);
 }
 
 Future<void> testMonoSpaceInParser() async {
@@ -57,13 +52,11 @@ Future<void> testMonoSpaceInParser() async {
   );
 
   expect(spans.length, 3);
-  expect((spans[0] as TextSpan).text, 'This is ');
-  expect(
-      (spans[1] as TextSpan).text, 'monospace');
-  expect((spans[2] as TextSpan).text, ' text');
+  expect((spans[0].children!.first as TextSpan).text, 'This is ');
+  expect((spans[1].children!.first as TextSpan).text, 'monospace');
+  expect((spans[2].children!.first as TextSpan).text, ' text');
 
-  expect((spans[1] as TextSpan).style!.fontFamily,
-      'Courier');
+  expect((spans[1].children!.first as TextSpan).style!.fontFamily, 'Courier');
 }
 
 Future<void> testCustomStyling() async {
@@ -81,24 +74,19 @@ Future<void> testCustomStyling() async {
   );
 
   expect(spans.length, 6);
-  expect((spans[0] as TextSpan).text, 'This is ');
-  expect((spans[1] as TextSpan).text, 'bold');
-  expect((spans[2] as TextSpan).text, ' and ');
-  expect((spans[3] as TextSpan).text, 'italic');
-  expect((spans[4] as TextSpan).text,
-      ' text with a ');
-  expect((spans[5] as TextSpan).text, 'link');
+  expect((spans[0].children!.first as TextSpan).text, 'This is ');
+  expect((spans[1].children!.first as TextSpan).text, 'bold');
+  expect((spans[2].children!.first as TextSpan).text, ' and ');
+  expect((spans[3].children!.first as TextSpan).text, 'italic');
+  expect((spans[4].children!.first as TextSpan).text, ' text with a ');
+  expect(spans[5].text, 'link');
 
-  expect(
-    (spans[1] as TextSpan).style!.fontWeight,
-    FontWeight.w600,
-  );
-  expect(
-    (spans[3] as TextSpan).style!.fontStyle,
-    FontStyle.italic,
-  );
-  expect((spans[5] as TextSpan).style!.color, Colors.red);
-  expect((spans[5] as TextSpan).recognizer, recognizer);
+  expect((spans[1].children!.first as TextSpan).style!.fontWeight,
+      FontWeight.w600,);
+  expect((spans[3].children!.first as TextSpan).style!.fontStyle,
+      FontStyle.italic,);
+  expect(spans[5].style!.color, Colors.red);
+  expect(spans[5].recognizer, recognizer);
 }
 
 Future<void> testFontSize() async {
@@ -108,16 +96,14 @@ Future<void> testFontSize() async {
   );
 
   expect(spans.length, 5);
-  expect((spans[0] as TextSpan).text, 'This is ');
-  expect((spans[1] as TextSpan).text, 'body');
-  expect((spans[2] as TextSpan).text, ' and ');
-  expect((spans[3] as TextSpan).text, 'title');
-  expect((spans[4] as TextSpan).text, ' size');
+  expect((spans[0].children!.first as TextSpan).text, 'This is ');
+  expect((spans[1].children!.first as TextSpan).text, 'body');
+  expect((spans[2].children!.first as TextSpan).text, ' and ');
+  expect((spans[3].children!.first as TextSpan).text, 'title');
+  expect((spans[4].children!.first as TextSpan).text, ' size');
 
-  expect(
-      (spans[1] as TextSpan).style!.fontSize, 10);
-  expect(
-      (spans[3] as TextSpan).style!.fontSize, 40);
+  expect((spans[1].children!.first as TextSpan).style!.fontSize, 10);
+  expect((spans[3].children!.first as TextSpan).style!.fontSize, 40);
 }
 
 Future<void> testUrlLauncher() async {
@@ -128,5 +114,5 @@ Future<void> testUrlLauncher() async {
       ..onTap = () => debugPrint('URL: $url and Text: $text'),
   );
 
-  expect((spans[1] as TextSpan).recognizer.runtimeType, TapGestureRecognizer);
+  expect(spans[1].recognizer.runtimeType, TapGestureRecognizer);
 }

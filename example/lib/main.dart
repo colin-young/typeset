@@ -85,8 +85,8 @@ class _TypeSetExampleState extends State<TypeSetExample> {
       monospaceStyle: const TextStyle(fontFamily: 'Courier'),
       searchTaggables: searchTaggables,
       buildTaggables: buildTaggables,
-      toFrontendConverter: (Taggable taggable) => taggable.name,
-      toBackendConverter: (Taggable taggable) => taggable.id,
+      toFrontendConverter: <Taggable>(taggable) => (taggable as dynamic).name,
+      toBackendConverter: <Taggable>(taggable) => (taggable as dynamic).id,
       toTaggableFromBackend: (prefix, id) => Future.value(Taggable(
         id: id,
         name: id,
