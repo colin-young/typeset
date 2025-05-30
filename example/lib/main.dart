@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/gestures.dart' show TapGestureRecognizer;
 import 'package:flutter/material.dart';
 import 'package:typeset_tag/typeset.dart';
+import 'widgets/typeset_input.dart';
 
 void main() {
   runApp(const MyApp());
@@ -27,17 +28,17 @@ class Topic extends Taggable {
 }
 
 /// A list of users to search from.
-const users = <User>[
-  User(id: 'aliceUniqueId', name: 'Alice'),
-  User(id: 'otherAliceUniqueId', name: 'Alice', icon: Icons.person_outline),
-  User(id: 'bobUniqueId', name: 'Bob'),
-  User(id: 'charLieUniqueId', name: 'Charlie'),
-  User(id: 'carolUniqueId', name: 'Carol'),
-  User(id: 'hawkingUniqueId', name: 'Stephen Hawking'),
-];
+Future<List<User>> getUsers() async => const <User>[
+    User(id: 'aliceUniqueId', name: 'Alice'),
+    User(id: 'otherAliceUniqueId', name: 'Alice', icon: Icons.person_outline), 
+    User(id: 'bobUniqueId', name: 'Bob'),
+    User(id: 'charLieUniqueId', name: 'Charlie'),
+    User(id: 'carolUniqueId', name: 'Carol'),
+    User(id: 'hawkingUniqueId', name: 'Stephen Hawking'),
+  ];
 
 /// A list of topics to search from.
-const topics = <Topic>[
+Future<List<Topic>> getTopics() async => const <Topic>[
   Topic(id: 'myDartId', name: 'Dart'),
   Topic(id: 'myFlutterId', name: 'Flutter'),
   Topic(id: 'myPubId', name: 'Pub'),
@@ -66,27 +67,23 @@ class TypeSetExample extends StatefulWidget {
 }
 
 class _TypeSetExampleState extends State<TypeSetExample> {
-  late final TypeSetEditingController _controller;
-  OverlayEntry? _overlayEntry;
-  final _formKey = GlobalKey<FormState>();
-  final _layerLink = LayerLink();
-  late FocusNode _focusNode;
+  late final TypeSetEditingController<Taggable> _controller;
   String backendFormat = '';
+  String displayText = '';
 
   @override
   void initState() {
     super.initState();
     _controller = TypeSetEditingController<Taggable>(
-      text:
-          'This is *bold*, _italic_, ~strikethrough~, `monospace`, and a §link|https://flutter.dev§',
+      text: 'This is *bold*, _italic_, ~strikethrough~, `monospace`, and a §link|https://flutter.dev§',
       markerColor: Colors.grey.shade400,
       linkStyle: const TextStyle(color: Colors.blue),
       boldStyle: const TextStyle(fontWeight: FontWeight.bold),
       monospaceStyle: const TextStyle(fontFamily: 'Courier'),
       searchTaggables: searchTaggables,
-      buildTaggables: buildTaggables,
-      toFrontendConverter: <Taggable>(taggable) => (taggable as dynamic).name,
-      toBackendConverter: <Taggable>(taggable) => (taggable as dynamic).id,
+      buildTaggables: (taggables) async => null, // Will be handled by TypeSetInput
+      toFrontendConverter: <T>(T taggable) => (taggable as Taggable).name,
+      toBackendConverter: <T>(T taggable) => (taggable as Taggable).id,
       toTaggableFromBackend: (prefix, id) => Future.value(Taggable(
         id: id,
         name: id,
@@ -95,7 +92,6 @@ class _TypeSetExampleState extends State<TypeSetExample> {
       tagStyles: const [TagStyle(prefix: '@'), TagStyle(prefix: '#')],
       textStyleBuilder: textStyleBuilder,
     );
-    _focusNode = FocusNode();
 
     // Add a listener to update the [backendFormat] when the text changes.
     _controller.addListener(
@@ -104,21 +100,20 @@ class _TypeSetExampleState extends State<TypeSetExample> {
 
   @override
   void dispose() {
-    _focusNode.dispose();
     _controller.dispose();
-    _overlayEntry?.remove();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     var tagParserParts = TagParserParts<Taggable>(
-      toFrontendConverter: <Taggable>(taggable) => (taggable as dynamic).name,
-      toBackendConverter: <Taggable>(taggable) => (taggable as dynamic).id,
+      toFrontendConverter: <T>(T taggable) => (taggable as Taggable).name,
+      toBackendConverter: <T>(T taggable) => (taggable as Taggable).id,
       backendToTaggable: backendToTaggable,
-      taggableToInlineSpan: <Taggable>(taggable, tagStyle) {
+      taggableToInlineSpan: <T>(taggable, tagStyle) {
+        final t = taggable as Taggable;
         return TextSpan(
-          text: '${tagStyle.prefix}${taggable.name}',
+          text: '${tagStyle.prefix}${t.name}',
           style: textStyleBuilder(context, tagStyle.prefix),
         );
       },
@@ -300,35 +295,16 @@ Link
                   ),
                   const Divider(),
                   const SizedBox(height: 12),
-                  Form(
-                    key: _formKey,
-                    child: CompositedTransformTarget(
-                      link: _layerLink,
-                      child: TextField(
-                        controller: _controller,
-                        maxLines: 3,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          hintText: 'Enter text here...',
-                        ),
-                        onChanged: (val) {
-                          setState(() {
-                            debugPrint(val);
-                          });
-                        },
-                        contextMenuBuilder: (context, editableTextState) {
-                          return AdaptiveTextSelectionToolbar.buttonItems(
-                            anchors: editableTextState.contextMenuAnchors,
-                            buttonItems: [
-                              ...getTypesetContextMenus(
-                                editableTextState: editableTextState,
-                              ),
-                              ...editableTextState.contextMenuButtonItems,
-                            ],
-                          );
-                        },
-                      ),
-                    ),
+                  TypeSetInput(
+                    users: getUsers(),
+                    topics: getTopics(),
+                    text: _controller.text,
+                    onChanged: (value) {
+                      setState(() {
+                        backendFormat = _controller.textInBackendFormat;
+                        displayText = value;
+                      });
+                    },
                   ),
                   const SizedBox(height: 20),
                   const Text(
@@ -337,7 +313,8 @@ Link
                   ),
                   const SizedBox(height: 8),
                   TypeSetTag<Taggable>(
-                    _controller.text,
+                    // _controller.text,
+                    displayText,
                     style: const TextStyle(fontSize: 16),
                     boldStyle: const TextStyle(fontWeight: FontWeight.bold),
                     monospaceStyle: const TextStyle(fontFamily: 'Courier'),
@@ -362,67 +339,6 @@ Link
         ),
       ),
     );
-  }
-
-  Future<Taggable?> buildTaggables(
-      FutureOr<Iterable<Taggable>> taggables) async {
-    final availableTaggables = await taggables;
-
-    // We use a [Completer] to return the selected taggable from the overlay.
-    // This is because overlays do not return values directly.
-    Completer<Taggable?> completer = Completer();
-
-    // Remove the existing overlay if it exists.
-    _overlayEntry?.remove();
-    if (availableTaggables.isEmpty) {
-      // If there are no taggables to show, we return null.
-      _overlayEntry = null;
-      completer.complete(null);
-    } else {
-      _overlayEntry = OverlayEntry(builder: (context) {
-        // The following few lines are used to position the overlay above the
-        // [TextField]. It moves along if the [TextField] moves.
-        final renderBox =
-            _formKey.currentContext!.findRenderObject() as RenderBox;
-        return Positioned(
-          width: renderBox.size.width,
-          bottom: renderBox.size.height + 8,
-          child: CompositedTransformFollower(
-            link: _layerLink,
-            showWhenUnlinked: false,
-            followerAnchor: Alignment.bottomLeft,
-            child: Material(
-              child: ListView(
-                shrinkWrap: true,
-                children: availableTaggables.map((taggable) {
-                  // We show the list of taggables in a [ListView].
-                  return ListTile(
-                    leading: Icon(taggable.icon),
-                    title: Text(taggable.name),
-                    tileColor: Theme.of(context).colorScheme.primaryContainer,
-                    onTap: () {
-                      // When a taggable is selected, remove the overlay
-                      _overlayEntry?.remove();
-                      _overlayEntry = null;
-                      // and complete the Completer with the selected taggable.
-                      completer.complete(taggable);
-                      // Focus the [TextField] to continue typing.
-                      // Do this after completing the Completer to avoid
-                      // interfering with the logic of adding the taggable.
-                      _focusNode.requestFocus();
-                    },
-                  );
-                }).toList(),
-              ),
-            ),
-          ),
-        );
-      });
-      if (mounted) {
-        Overlay.of(context).insert(_overlayEntry!);
-      }
-    }
-    return completer.future;
   }
 
   TextStyle? textStyleBuilder(BuildContext context, String prefix) {
@@ -456,31 +372,31 @@ Link
     };
   }
 
-  Future<Iterable<Taggable>> searchTaggables(
-      String tagPrefix, String? tagName) async {
+  Future<Iterable<Taggable>> searchTaggables(String tagPrefix, String? tagName) async {
+    // This function is still needed for the TypeSetEditingController
     if (tagName == null || tagName.isEmpty) {
       return [];
     }
     return switch (tagPrefix) {
-      '@' => users
+      '@' => (await getUsers())
           .where((user) =>
               user.name.toLowerCase().startsWith(tagName.toLowerCase()))
           .toList(),
-      '#' => topics
+      '#' => (await getTopics())
           .where((topic) =>
               topic.name.toLowerCase().startsWith(tagName.toLowerCase()))
           .toList(),
-      'all:' => [...users, ...topics].where((taggable) =>
+      'all:' => [...(await getUsers()), ...(await getTopics())].where((taggable) =>
           taggable.name.toLowerCase().startsWith(tagName.toLowerCase())),
       _ => [],
     };
   }
 
-  FutureOr<Taggable?> backendToTaggable(String prefix, String id) {
+  FutureOr<Taggable?> backendToTaggable(String prefix, String id) async {
     return switch (prefix) {
-      '@' => users.where((user) => user.id == id).firstOrNull,
-      '#' => topics.where((topic) => topic.id == id).firstOrNull,
-      'all:' => [...users, ...topics]
+      '@' => (await getUsers()).where((user) => user.id == id).firstOrNull,
+      '#' => (await getTopics()).where((topic) => topic.id == id).firstOrNull,
+      'all:' => [...(await getUsers()), ...(await getTopics())]
           .where((taggable) => taggable.id == id)
           .firstOrNull,
       _ => null,
