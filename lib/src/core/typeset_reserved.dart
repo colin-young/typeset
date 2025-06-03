@@ -1,3 +1,5 @@
+// coverage:ignore-file
+
 /// A class that contains constant variables representing different
 /// typesetting elements.
 ///
