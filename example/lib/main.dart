@@ -3,18 +3,9 @@ import 'dart:async';
 import 'package:flutter/gestures.dart' show TapGestureRecognizer;
 import 'package:flutter/material.dart';
 import 'package:typeset_tag/typeset.dart';
-import 'widgets/typeset_input.dart';
 
 void main() {
   runApp(const MyApp());
-}
-
-class Taggable {
-  const Taggable({required this.id, required this.name, required this.icon});
-
-  final String id;
-  final String name;
-  final IconData icon;
 }
 
 class User extends Taggable {
@@ -96,6 +87,34 @@ class _TypeSetExampleState extends State<TypeSetExample> {
     // Add a listener to update the [backendFormat] when the text changes.
     _controller.addListener(
         () => setState(() => backendFormat = _controller.textInBackendFormat));
+  }
+
+  Future<Iterable<Taggable>> searchTaggables(
+    String tagPrefix,
+    String? tagName,
+  ) async {
+    // This function is still needed for the TypeSetEditingController
+    if (tagName == null || tagName.isEmpty) {
+      return [];
+    }
+    return switch (tagPrefix) {
+      '@' => (await getUsers())
+          .where(
+            (user) => user.name.toLowerCase().startsWith(tagName.toLowerCase()),
+          )
+          .toList(),
+      '#' => (await getTopics())
+          .where(
+            (topic) =>
+                topic.name.toLowerCase().startsWith(tagName.toLowerCase()),
+          )
+          .toList(),
+      'all:' => [...(await getUsers()), ...(await getTopics())].where(
+          (taggable) =>
+              taggable.name.toLowerCase().startsWith(tagName.toLowerCase()),
+        ),
+      _ => [],
+    };
   }
 
   @override
@@ -369,26 +388,6 @@ Link
           decoration: TextDecoration.underline,
         ),
       _ => null,
-    };
-  }
-
-  Future<Iterable<Taggable>> searchTaggables(String tagPrefix, String? tagName) async {
-    // This function is still needed for the TypeSetEditingController
-    if (tagName == null || tagName.isEmpty) {
-      return [];
-    }
-    return switch (tagPrefix) {
-      '@' => (await getUsers())
-          .where((user) =>
-              user.name.toLowerCase().startsWith(tagName.toLowerCase()))
-          .toList(),
-      '#' => (await getTopics())
-          .where((topic) =>
-              topic.name.toLowerCase().startsWith(tagName.toLowerCase()))
-          .toList(),
-      'all:' => [...(await getUsers()), ...(await getTopics())].where((taggable) =>
-          taggable.name.toLowerCase().startsWith(tagName.toLowerCase())),
-      _ => [],
     };
   }
 

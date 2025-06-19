@@ -2,8 +2,6 @@ import 'package:flutter/gestures.dart' show TapGestureRecognizer;
 import 'package:flutter/material.dart';
 import 'package:typeset_tag/typeset.dart';
 
-import 'typeset_editing_controller_test.dart';
-
 /// A test widget for TypeSet functionality that displays text with TypeSet
 /// formatting.
 /// 

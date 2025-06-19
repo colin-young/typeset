@@ -1,10 +1,13 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:typeset_tag/typeset.dart';
-import '../main.dart';
 
 /// A reusable input widget that shows suggestions when typing @ or #
-class TypeSetInput extends StatefulWidget {
+class TypeSetInput<T extends Taggable> extends StatefulWidget {
+  /// A widget for accepting input text with TypeSet configuration.
+  /// 
+  /// The TypeSetInput widget allows for text input with specific styling and
+  /// formatting options defined by TypeSet settings.
   const TypeSetInput({
     super.key,
     required this.users,
@@ -18,18 +21,18 @@ class TypeSetInput extends StatefulWidget {
     this.onChanged,
   });
 
-  final Future<List<Taggable>> users;
-  final Future<List<Taggable>> topics;
+  final Future<List<T>> users;
+  final Future<List<T>> topics;
   final String text;
   final InputDecoration decoration;
   final int maxLines;
   final ValueChanged<String>? onChanged;
 
   @override
-  State<TypeSetInput> createState() => _TypeSetInputState();
+  State<TypeSetInput<T>> createState() => _TypeSetInputState<T>();
 }
 
-class _TypeSetInputState extends State<TypeSetInput> {
+class _TypeSetInputState<T extends Taggable> extends State<TypeSetInput<T>> {
   late final TypeSetEditingController<Taggable> _controller;
   OverlayEntry? _overlayEntry;
   final _formKey = GlobalKey<FormState>();
@@ -73,12 +76,12 @@ class _TypeSetInputState extends State<TypeSetInput> {
     _focusNode = FocusNode();
 
     // Initialize the controller with all necessary configuration
-    _controller = TypeSetEditingController<Taggable>(
+    _controller = TypeSetEditingController<T>(
       text: widget.text,
       searchTaggables: _searchTaggables,
       buildTaggables: _buildTaggablesList,
-      toFrontendConverter: <T>(T taggable) => (taggable as Taggable).name,
-      toBackendConverter: <T>(T taggable) => (taggable as Taggable).id,
+      toFrontendConverter: <U>(U taggable) => (taggable as T).name,
+      toBackendConverter: <U>(U taggable) => (taggable as T).id,
       toTaggableFromBackend: (prefix, id) async {
         final taggable = switch (prefix) {
           '@' =>
@@ -123,6 +126,7 @@ class _TypeSetInputState extends State<TypeSetInput> {
         link: _layerLink,
         child: TextField(
           controller: _controller,
+          minLines: 1,
           maxLines: widget.maxLines,
           decoration: widget.decoration,
           focusNode: _focusNode,
@@ -145,7 +149,7 @@ class _TypeSetInputState extends State<TypeSetInput> {
     );
   }
 
-  Future<Iterable<Taggable>> _searchTaggables(
+  Future<Iterable<T>> _searchTaggables(
       String tagPrefix, String? tagName) async {
     if (tagName == null || tagName.isEmpty) {
       return [];
@@ -166,10 +170,10 @@ class _TypeSetInputState extends State<TypeSetInput> {
     };
   }
 
-  Future<Taggable?> _buildTaggablesList(
-      FutureOr<Iterable<Taggable>> taggables) async {
+  Future<T?> _buildTaggablesList(
+      FutureOr<Iterable<T>> taggables) async {
     final availableTaggables = await taggables;
-    final completer = Completer<Taggable?>();
+    final completer = Completer<T?>();
 
     _overlayEntry?.remove();
     if (availableTaggables.isEmpty) {
